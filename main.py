@@ -1,0 +1,20 @@
+from aiogram import Bot, Dispatcher
+import asyncio
+from app.core.config import settings
+
+from app.bot.handlers import start, menu, tasks, referrals, withdraw, admin
+
+bot = Bot(token=settings.BOT_TOKEN)
+dp = Dispatcher()
+dp.include_router(start.router)
+dp.include_router(menu.router)
+dp.include_router(tasks.router)
+dp.include_router(referrals.router)
+dp.include_router(withdraw.router)
+dp.include_router(admin.router)
+
+async def main():
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    asyncio.run(main())
