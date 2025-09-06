@@ -1,0 +1,13 @@
+from aiogram import Router, types
+from app.bot.keyboards.menu import main_menu
+
+router = Router()
+
+@router.message(commands=["admin"])
+async def admin_panel(message: types.Message):
+    kb = types.InlineKeyboardMarkup(row_width=1)
+    kb.add(
+        types.InlineKeyboardButton("View Users", callback_data="admin_view_users"),
+        types.InlineKeyboardButton("Approve Withdraws", callback_data="admin_withdraws")
+    )
+    await message.answer("Welcome Admin! Manage users and payouts:", reply_markup=kb)
