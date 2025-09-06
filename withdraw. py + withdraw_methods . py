@@ -1,0 +1,30 @@
+from aiogram import Router, types
+from app.db.session import SessionLocal
+from app.db.models import User, WithdrawRequest
+from app.bot.keyboards.menu import main_menu
+
+router = Router()
+methods = ["bkash", "rocket", "nagad", "bank"]
+
+@router.callback_query(lambda c: c.data=="withdraw")
+async def withdraw(call: types.CallbackQuery):
+    kb = types.InlineKeyboardMarkup(row_width=2)
+    for m in methods:
+        kb.add(types.InlineKeyboardButton(m.capitalize(), callback_data=f"withdraw_{m}"))
+    await call.message.answer("Choose payout method:", reply_markup=kb)
+
+for m in methods:
+    @router.callback_query(lambda c, method=m: c.data==f"withdraw_{method}")
+    async def method_withdraw(call: types.CallbackQuery, method=m):
+        db = SessionLocal()
+        user = db.query(User).filter(User.telegram_id==str(call.from_user.id)).first()
+        if user.balance <=0:
+            await call.message.answer("Insufficient balance!")
+            db.close()
+            return
+        amount = user.balance
+        user.balance = 0
+        db.add(WithdrawRequest(user_id=user.id, method=method, amount=amount))
+        db.commit()
+        db.close()
+        await call.message.answer(f"💰 Withdraw request of {amount} BDT via {method.capitalize()} sent. Admin will approve.")
