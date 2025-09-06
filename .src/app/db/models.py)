@@ -1,0 +1,55 @@
+# Telegram Bot token
+BOT_TOKEN=83382288from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey
+from sqlalchemy.orm import relationship
+from .base import Base
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    telegram_id = Column(String, unique=True, index=True)
+    username = Column(String, nullable=True)
+    balance = Column(Float, default=0.0)
+    referrals_count = Column(Integer, default=0)
+    referred_by = Column(Integer, nullable=True)  # user id who referred
+
+class Task(Base):
+    __tablename__ = "tasks"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    description = Column(String)
+    reward = Column(Float, default=0.0)
+    url = Column(String)
+
+class UserTask(Base):
+    __tablename__ = "user_tasks"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    task_id = Column(Integer, ForeignKey("tasks.id"))
+    completed = Column(Boolean, default=False)
+    user = relationship("User")
+    task = relationship("Task")
+
+class WithdrawRequest(Base):
+    __tablename__ = "withdraw_requests"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    method = Column(String)
+    amount = Column(Float)
+    approved = Column(Boolean, default=False)
+    user = relationship("User")58:AAH_K8Hm5U5QRDiCiVCD83U_3Oidhw60RsAgram admin IDs (comma separated)
+ADMIN_IDS=12345678
+
+# PostgreSQL database URL
+DATABASE_URL=postgresql://postgres:password@db:5432/earnbot
+
+# Redis for Celery
+REDIS_URL=redis://redis:6379/0
+
+# Required Telegram channels for access
+REQUIRED_CHANNELS=@YourChannel
+
+# Admin secret token for API or Web
+ADMIN_TOKEN=secret_admin_token
+
+# Sentry for error monitoring
+SENTRY_DSN=
