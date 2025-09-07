@@ -1,4 +1,4 @@
-from aiogram import Router, types
+python 01_main.py aiogram import Router, types
 from app.db.session import SessionLocal
 from app.db.models import User
 
